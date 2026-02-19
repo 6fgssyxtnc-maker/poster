@@ -1,52 +1,66 @@
 import { useState, useRef } from "react";
 import { Rnd } from "react-rnd";
-import html2canvas from "html2canvas";
 
 export default function App() {
   const [userImage, setUserImage] = useState(null);
+  const [imageObj, setImageObj] = useState(null);
+  const [position, setPosition] = useState({ x: 120, y: 120 });
+  const [size, setSize] = useState({ width: 300, height: 300 });
+
   const posterRef = useRef(null);
 
+  const handleImageUpload = (file) => {
+    const url = URL.createObjectURL(file);
+    setUserImage(url);
+
+    const img = new Image();
+    img.src = url;
+    img.onload = () => {
+      setImageObj(img);
+    };
+  };
+
   const downloadPoster = async () => {
-  if (!posterRef.current) return;
+    const canvas = document.createElement("canvas");
+    canvas.width = 1080;
+    canvas.height = 1080;
+    const ctx = canvas.getContext("2d");
 
-  const canvas = await html2canvas(posterRef.current, {
-    useCORS: true,
-    scale: 2,   // Correct scaling (540 × 2 = 1080)
-    backgroundColor: null
-  });
+    // Load poster background
+    const poster = new Image();
+    poster.src = "/poster-bg.png";
+    poster.crossOrigin = "anonymous";
 
-  const link = document.createElement("a");
-  link.download = "facebook-poster.png";
-  link.href = canvas.toDataURL("image/png", 1.0);
-  link.click();
-};
+    poster.onload = () => {
+      // Draw user image first
+      if (imageObj) {
+        ctx.drawImage(
+          imageObj,
+          position.x * 2,
+          position.y * 2,
+          size.width * 2,
+          size.height * 2
+        );
+      }
 
-  // Restore original size
-  element.style.width = originalWidth;
-  element.style.height = originalHeight;
+      // Draw poster overlay
+      ctx.drawImage(poster, 0, 0, 1080, 1080);
 
-  const link = document.createElement("a");
-  link.download = "facebook-poster.png";
-  link.href = canvas.toDataURL("image/png", 1.0);
-  link.click();
-};
-
-    const link = document.createElement("a");
-    link.download = "facebook-poster.png";
-    link.href = canvas.toDataURL("image/png", 1.0);
-    link.click();
+      const link = document.createElement("a");
+      link.download = "facebook-poster.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    };
   };
 
   return (
-    <div style={{ padding: 20, fontFamily: "Arial, sans-serif" }}>
+    <div style={{ padding: 20, fontFamily: "Arial" }}>
       <h2>Event Poster Generator</h2>
 
       <input
         type="file"
         accept="image/*"
-        onChange={(e) =>
-          setUserImage(URL.createObjectURL(e.target.files[0]))
-        }
+        onChange={(e) => handleImageUpload(e.target.files[0])}
       />
 
       <br /><br />
@@ -60,17 +74,22 @@ export default function App() {
           overflow: "hidden"
         }}
       >
-        {/* USER IMAGE - bottom layer */}
         {userImage && (
           <Rnd
-            default={{
-              x: 120,
-              y: 120,
-              width: 300,
-              height: 300
-            }}
+            size={size}
+            position={position}
             bounds="parent"
             lockAspectRatio={true}
+            onDragStop={(e, d) =>
+              setPosition({ x: d.x, y: d.y })
+            }
+            onResizeStop={(e, direction, ref, delta, pos) => {
+              setSize({
+                width: parseInt(ref.style.width),
+                height: parseInt(ref.style.height)
+              });
+              setPosition(pos);
+            }}
           >
             <img
               src={userImage}
@@ -84,7 +103,6 @@ export default function App() {
           </Rnd>
         )}
 
-        {/* POSTER PNG - top layer */}
         <img
           src="/poster-bg.png"
           alt="poster"
@@ -94,7 +112,7 @@ export default function App() {
             height: "100%",
             top: 0,
             left: 0,
-            pointerEvents: "none"   // important
+            pointerEvents: "none"
           }}
         />
       </div>
