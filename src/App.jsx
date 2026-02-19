@@ -44,7 +44,31 @@ export default function App() {
           overflow: "hidden"
         }}
       >
-        {/* Poster background */}
+        {/* USER IMAGE - bottom layer */}
+        {userImage && (
+          <Rnd
+            default={{
+              x: 120,
+              y: 120,
+              width: 300,
+              height: 300
+            }}
+            bounds="parent"
+            lockAspectRatio={true}
+          >
+            <img
+              src={userImage}
+              alt="user"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover"
+              }}
+            />
+          </Rnd>
+        )}
+
+        {/* POSTER PNG - top layer */}
         <img
           src="/poster-bg.png"
           alt="poster"
@@ -53,60 +77,10 @@ export default function App() {
             width: "100%",
             height: "100%",
             top: 0,
-            left: 0
+            left: 0,
+            pointerEvents: "none"   // important
           }}
         />
-
-        {/* User photo */}
-        {userImage && (
-          <Rnd
-            default={{
-              x: 100,
-              y: 100,
-              width: 250,
-              height: 250
-            }}
-            bounds="parent"
-            lockAspectRatio={true}   // prevents stretching
-          >
-            <img
-              src={userImage}
-              alt="user"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                borderRadius: "16px"
-              }}
-            />
-          </Rnd>
-        )}
-
-        {/* Placeholder */}
-        {!userImage && (
-          <div
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: 250,
-              height: 250,
-              border: "3px dashed white",
-              borderRadius: "16px",
-              backgroundColor: "rgba(0,0,0,0.35)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "white",
-              fontWeight: "bold",
-              textAlign: "center",
-              padding: 20
-            }}
-          >
-            Upload your photo
-          </div>
-        )}
       </div>
 
       <br />
