@@ -116,7 +116,7 @@ export default function App() {
       <br />
 
       <button onClick={downloadPoster}>
-        Lejuplādēt PNG
+        Download PNG
       </button>
     </div>
   );
