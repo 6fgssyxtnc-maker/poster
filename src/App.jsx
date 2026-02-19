@@ -6,25 +6,24 @@ export default function App() {
   const [userImage, setUserImage] = useState(null);
   const posterRef = useRef(null);
 
-  // ✅ FIXED async export function
   const downloadPoster = async () => {
     if (!posterRef.current) return;
 
     const canvas = await html2canvas(posterRef.current, {
       useCORS: true,
-      scale: 4,              // High resolution export
+      scale: 4,
       backgroundColor: null
     });
 
     const link = document.createElement("a");
     link.download = "facebook-poster.png";
-    link.href = canvas.toDataURL("image/png", 1.0); // Max quality
+    link.href = canvas.toDataURL("image/png", 1.0);
     link.click();
   };
 
   const copyCaption = () => {
     navigator.clipboard.writeText(
-      "I’m attending Baltic Business Forum 2025 🚀 Join me! #BBF2025"
+      "I’m attending LĪDERE Akadēmija 🚀 Join me! #Lidere"
     );
     alert("Caption copied!");
   };
@@ -44,89 +43,83 @@ export default function App() {
       <br /><br />
 
       <div
-  ref={posterRef}
-  style={{
-    width: 540,
-    height: 540,
-    position: "relative",
-    border: "1px solid #ccc",
-    backgroundImage: "url('/poster-bg.png')",
-    backgroundSize: "cover",
-    overflow: "hidden"
-  }}
->
-  {/* Placeholder frame */}
-  {!userImage && (
-    <div
-      style={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: 250,
-        height: 250,
-        border: "3px dashed white",
-        borderRadius: "10px",
-        backgroundColor: "rgba(0,0,0,0.3)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        color: "white",
-        fontWeight: "bold",
-        textAlign: "center",
-        padding: 10
-      }}
-    >
-      Drag your photo here
-    </div>
-  )}
-
-  {userImage && (
-    <Rnd
-      default={{
-        x: 145,
-        y: 145,
-        width: 250,
-        height: 250
-      }}
-      bounds="parent"
-    >
-      <img
-        src={userImage}
-        alt="user"
+        ref={posterRef}
         style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          borderRadius: "10px"
+          width: 540,
+          height: 540,
+          position: "relative",
+          overflow: "hidden"
         }}
-      />
-    </Rnd>
-  )}
-</div>
       >
-        {userImage && (
-          <Rnd
-            default={{
-              x: 100,
-              y: 100,
-              width: 250,
-              height: 250
-            }}
-            bounds="parent"
-          >
-            <img
-              src={userImage}
-              alt="user"
+        {/* Poster background */}
+        <img
+          src="/poster-bg.png"
+          alt="poster"
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            top: 0,
+            left: 0
+          }}
+        />
+
+        {/* Circular frame area */}
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 300,
+            height: 300,
+            borderRadius: "50%",
+            overflow: "hidden",
+            boxShadow: "0 0 0 4px white"
+          }}
+        >
+          {!userImage && (
+            <div
               style={{
                 width: "100%",
                 height: "100%",
-                objectFit: "cover",
-                borderRadius: "10px"
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "rgba(0,0,0,0.35)",
+                color: "white",
+                fontWeight: "bold",
+                textAlign: "center",
+                padding: 20
               }}
-            />
-          </Rnd>
-        )}
+            >
+              Upload your photo
+            </div>
+          )}
+
+          {userImage && (
+            <Rnd
+              default={{
+                x: -50,
+                y: -50,
+                width: 400,
+                height: 400
+              }}
+              bounds="parent"
+              enableResizing={false}   // 🚀 No distortion
+            >
+              <img
+                src={userImage}
+                alt="user"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover"
+                }}
+              />
+            </Rnd>
+          )}
+        </div>
       </div>
 
       <br />
