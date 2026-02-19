@@ -64,62 +64,56 @@ export default function App() {
           }}
         />
 
-        {/* Circular frame */}
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 300,
-            height: 300,
-            borderRadius: "50%",
-            overflow: "hidden",
-            boxShadow: "0 0 0 4px white"
-          }}
-        >
-          {!userImage && (
-            <div
+        {/* User image on top */}
+        {userImage && (
+          <Rnd
+            default={{
+              x: 100,
+              y: 100,
+              width: 250,
+              height: 250
+            }}
+            bounds="parent"
+            lockAspectRatio={true}  // prevents distortion
+          >
+            <img
+              src={userImage}
+              alt="user"
               style={{
                 width: "100%",
                 height: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "rgba(0,0,0,0.35)",
-                color: "white",
-                fontWeight: "bold",
-                textAlign: "center",
-                padding: 20
+                objectFit: "cover",
+                borderRadius: "12px"
               }}
-            >
-              Upload your photo
-            </div>
-          )}
+            />
+          </Rnd>
+        )}
 
-          {userImage && (
-            <Rnd
-              default={{
-                x: -50,
-                y: -50,
-                width: 400,
-                height: 400
-              }}
-              bounds="parent"
-              lockAspectRatio={true}   // ✅ Prevent distortion
-            >
-              <img
-                src={userImage}
-                alt="user"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover"
-                }}
-              />
-            </Rnd>
-          )}
-        </div>
+        {/* Placeholder box */}
+        {!userImage && (
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 250,
+              height: 250,
+              border: "3px dashed white",
+              borderRadius: "12px",
+              backgroundColor: "rgba(0,0,0,0.35)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "white",
+              fontWeight: "bold",
+              textAlign: "center",
+              padding: 20
+            }}
+          >
+            Upload your photo
+          </div>
+        )}
       </div>
 
       <br />
