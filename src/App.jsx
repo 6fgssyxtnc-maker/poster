@@ -4,46 +4,41 @@ import { Rnd } from "react-rnd";
 export default function App() {
   const [userImage, setUserImage] = useState(null);
   const [imageObj, setImageObj] = useState(null);
-  const [position, setPosition] = useState({ x: 120, y: 120 });
-  const [size, setSize] = useState({ width: 300, height: 300 });
+  const [position, setPosition] = useState({ x: 240, y: 240 });
+  const [size, setSize] = useState({ width: 600, height: 600 });
 
   const posterRef = useRef(null);
 
-  const handleImageUpload = (file) => {
+  const handleUpload = (file) => {
     const url = URL.createObjectURL(file);
     setUserImage(url);
 
     const img = new Image();
     img.src = url;
-    img.onload = () => {
-      setImageObj(img);
-    };
+    img.onload = () => setImageObj(img);
   };
 
-  const downloadPoster = async () => {
+  const downloadPoster = () => {
     const canvas = document.createElement("canvas");
     canvas.width = 1080;
     canvas.height = 1080;
     const ctx = canvas.getContext("2d");
 
-    // Load poster background
     const poster = new Image();
     poster.src = "/poster-bg.png";
     poster.crossOrigin = "anonymous";
 
     poster.onload = () => {
-      // Draw user image first
       if (imageObj) {
         ctx.drawImage(
           imageObj,
-          position.x * 2,
-          position.y * 2,
-          size.width * 2,
-          size.height * 2
+          position.x,
+          position.y,
+          size.width,
+          size.height
         );
       }
 
-      // Draw poster overlay
       ctx.drawImage(poster, 0, 0, 1080, 1080);
 
       const link = document.createElement("a");
@@ -55,23 +50,24 @@ export default function App() {
 
   return (
     <div style={{ padding: 20, fontFamily: "Arial" }}>
-      <h2>Event Poster Generator</h2>
+      <h2>Poster Generator</h2>
 
       <input
         type="file"
         accept="image/*"
-        onChange={(e) => handleImageUpload(e.target.files[0])}
+        onChange={(e) => handleUpload(e.target.files[0])}
       />
 
       <br /><br />
 
       <div
-        ref={posterRef}
         style={{
-          width: 540,
-          height: 540,
+          width: 1080,
+          height: 1080,
           position: "relative",
-          overflow: "hidden"
+          overflow: "hidden",
+          transform: "scale(0.5)",
+          transformOrigin: "top left"
         }}
       >
         {userImage && (
@@ -83,7 +79,7 @@ export default function App() {
             onDragStop={(e, d) =>
               setPosition({ x: d.x, y: d.y })
             }
-            onResizeStop={(e, direction, ref, delta, pos) => {
+            onResizeStop={(e, dir, ref, delta, pos) => {
               setSize({
                 width: parseInt(ref.style.width),
                 height: parseInt(ref.style.height)
@@ -120,7 +116,7 @@ export default function App() {
       <br />
 
       <button onClick={downloadPoster}>
-        Download PNG
+        Lejuplādēt PNG
       </button>
     </div>
   );
