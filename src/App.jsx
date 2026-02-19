@@ -50,8 +50,7 @@ export default function App() {
           height: 540,
           position: "relative",
           border: "1px solid #ccc",
-          backgroundImage:
-            "url('https://via.placeholder.com/1080x1080.png?text=YOUR+OFFICIAL+POSTER')",
+          backgroundImage: "url('/poster-bg.png')",
           backgroundSize: "cover",
           overflow: "hidden"
         }}
