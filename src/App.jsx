@@ -44,16 +44,66 @@ export default function App() {
       <br /><br />
 
       <div
-        ref={posterRef}
+  ref={posterRef}
+  style={{
+    width: 540,
+    height: 540,
+    position: "relative",
+    border: "1px solid #ccc",
+    backgroundImage: "url('/poster-bg.png')",
+    backgroundSize: "cover",
+    overflow: "hidden"
+  }}
+>
+  {/* Placeholder frame */}
+  {!userImage && (
+    <div
+      style={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: 250,
+        height: 250,
+        border: "3px dashed white",
+        borderRadius: "10px",
+        backgroundColor: "rgba(0,0,0,0.3)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center",
+        padding: 10
+      }}
+    >
+      Drag your photo here
+    </div>
+  )}
+
+  {userImage && (
+    <Rnd
+      default={{
+        x: 145,
+        y: 145,
+        width: 250,
+        height: 250
+      }}
+      bounds="parent"
+    >
+      <img
+        src={userImage}
+        alt="user"
         style={{
-          width: 540,              // Smaller preview
-          height: 540,
-          position: "relative",
-          border: "1px solid #ccc",
-          backgroundImage: "url('/poster-bg.png')",
-          backgroundSize: "cover",
-          overflow: "hidden"
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          borderRadius: "10px"
         }}
+      />
+    </Rnd>
+  )}
+</div>
       >
         {userImage && (
           <Rnd
