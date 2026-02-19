@@ -6,11 +6,11 @@ export default function App() {
   const [userImage, setUserImage] = useState(null);
   const posterRef = useRef(null);
 
-  const downloadPoster = async () => {
-    const canvas = await html2canvas(posterRef.current, {
-      useCORS: true,
-      scale: 2
-    });
+  const canvas = await html2canvas(posterRef.current, {
+  useCORS: true,
+  scale: 4,   // higher resolution export
+  backgroundColor: null
+});
 
     const link = document.createElement("a");
     link.download = "facebook-poster.png";
