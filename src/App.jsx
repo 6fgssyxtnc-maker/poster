@@ -6,15 +6,19 @@ export default function App() {
   const [userImage, setUserImage] = useState(null);
   const posterRef = useRef(null);
 
-  const canvas = await html2canvas(posterRef.current, {
-  useCORS: true,
-  scale: 4,   // higher resolution export
-  backgroundColor: null
-});
+  // ✅ FIXED async export function
+  const downloadPoster = async () => {
+    if (!posterRef.current) return;
+
+    const canvas = await html2canvas(posterRef.current, {
+      useCORS: true,
+      scale: 4,              // High resolution export
+      backgroundColor: null
+    });
 
     const link = document.createElement("a");
     link.download = "facebook-poster.png";
-    link.href = canvas.toDataURL("image/png");
+    link.href = canvas.toDataURL("image/png", 1.0); // Max quality
     link.click();
   };
 
@@ -42,11 +46,12 @@ export default function App() {
       <div
         ref={posterRef}
         style={{
-          width: 1080,
-          height: 1080,
+          width: 540,              // Smaller preview
+          height: 540,
           position: "relative",
           border: "1px solid #ccc",
-          backgroundImage: "url('https://via.placeholder.com/1080x1080.png?text=YOUR+OFFICIAL+POSTER')",
+          backgroundImage:
+            "url('https://via.placeholder.com/1080x1080.png?text=YOUR+OFFICIAL+POSTER')",
           backgroundSize: "cover",
           overflow: "hidden"
         }}
@@ -54,10 +59,10 @@ export default function App() {
         {userImage && (
           <Rnd
             default={{
-              x: 300,
-              y: 300,
-              width: 400,
-              height: 400
+              x: 100,
+              y: 100,
+              width: 250,
+              height: 250
             }}
             bounds="parent"
           >
