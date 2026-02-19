@@ -1,16 +1,18 @@
 import { useState, useRef } from "react";
+import { Rnd } from "react-rnd";
 import html2canvas from "html2canvas";
 
 export default function App() {
   const [userImage, setUserImage] = useState(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [scale, setScale] = useState(1);
   const posterRef = useRef(null);
 
   const downloadPoster = async () => {
+    if (!posterRef.current) return;
+
     const canvas = await html2canvas(posterRef.current, {
       useCORS: true,
-      scale: 4
+      scale: 4,
+      backgroundColor: null
     });
 
     const link = document.createElement("a");
@@ -19,15 +21,8 @@ export default function App() {
     link.click();
   };
 
-  const handleDrag = (e) => {
-    setPosition({
-      x: position.x + e.movementX,
-      y: position.y + e.movementY
-    });
-  };
-
   return (
-    <div style={{ padding: 20, fontFamily: "Arial" }}>
+    <div style={{ padding: 20, fontFamily: "Arial, sans-serif" }}>
       <h2>Event Poster Generator</h2>
 
       <input
@@ -38,23 +33,7 @@ export default function App() {
         }
       />
 
-      {userImage && (
-        <>
-          <div style={{ marginTop: 10 }}>
-            Zoom:
-            <input
-              type="range"
-              min="1"
-              max="3"
-              step="0.01"
-              value={scale}
-              onChange={(e) => setScale(parseFloat(e.target.value))}
-            />
-          </div>
-        </>
-      )}
-
-      <br />
+      <br /><br />
 
       <div
         ref={posterRef}
@@ -65,52 +44,76 @@ export default function App() {
           overflow: "hidden"
         }}
       >
+        {/* Poster background */}
         <img
           src="/poster-bg.png"
           alt="poster"
           style={{
             position: "absolute",
             width: "100%",
-            height: "100%"
+            height: "100%",
+            top: 0,
+            left: 0
           }}
         />
 
+        {/* User photo */}
         {userImage && (
-          <div
-            onMouseDown={(e) => {
-              const move = (ev) => handleDrag(ev);
-              const up = () => {
-                window.removeEventListener("mousemove", move);
-                window.removeEventListener("mouseup", up);
-              };
-              window.addEventListener("mousemove", move);
-              window.addEventListener("mouseup", up);
+          <Rnd
+            default={{
+              x: 100,
+              y: 100,
+              width: 250,
+              height: 250
             }}
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: `translate(-50%, -50%) translate(${position.x}px, ${position.y}px) scale(${scale})`,
-              cursor: "grab"
-            }}
+            bounds="parent"
+            lockAspectRatio={true}   // prevents stretching
           >
             <img
               src={userImage}
               alt="user"
               style={{
-                width: 300,
-                height: 300,
+                width: "100%",
+                height: "100%",
                 objectFit: "cover",
-                borderRadius: 20
+                borderRadius: "16px"
               }}
             />
+          </Rnd>
+        )}
+
+        {/* Placeholder */}
+        {!userImage && (
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 250,
+              height: 250,
+              border: "3px dashed white",
+              borderRadius: "16px",
+              backgroundColor: "rgba(0,0,0,0.35)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "white",
+              fontWeight: "bold",
+              textAlign: "center",
+              padding: 20
+            }}
+          >
+            Upload your photo
           </div>
         )}
       </div>
 
       <br />
 
-      <button onClick={downloadPoster}>Download PNG</button>
+      <button onClick={downloadPoster}>
+        Download PNG
+      </button>
     </div>
   );
 }
