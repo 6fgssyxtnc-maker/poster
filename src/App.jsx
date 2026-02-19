@@ -64,7 +64,7 @@ export default function App() {
           }}
         />
 
-        {/* Circular frame area */}
+        {/* Circular frame */}
         <div
           style={{
             position: "absolute",
@@ -106,7 +106,7 @@ export default function App() {
                 height: 400
               }}
               bounds="parent"
-              enableResizing={false}   // 🚀 No distortion
+              lockAspectRatio={true}   // ✅ Prevent distortion
             >
               <img
                 src={userImage}
