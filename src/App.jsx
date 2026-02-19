@@ -7,13 +7,33 @@ export default function App() {
   const posterRef = useRef(null);
 
   const downloadPoster = async () => {
-    if (!posterRef.current) return;
+  if (!posterRef.current) return;
 
-    const canvas = await html2canvas(posterRef.current, {
-      useCORS: true,
-      scale: 4,
-      backgroundColor: null
-    });
+  const element = posterRef.current;
+
+  // Save original size
+  const originalWidth = element.style.width;
+  const originalHeight = element.style.height;
+
+  // Temporarily enlarge to full resolution
+  element.style.width = "1080px";
+  element.style.height = "1080px";
+
+  const canvas = await html2canvas(element, {
+    useCORS: true,
+    scale: 1,
+    backgroundColor: null
+  });
+
+  // Restore original size
+  element.style.width = originalWidth;
+  element.style.height = originalHeight;
+
+  const link = document.createElement("a");
+  link.download = "facebook-poster.png";
+  link.href = canvas.toDataURL("image/png", 1.0);
+  link.click();
+};
 
     const link = document.createElement("a");
     link.download = "facebook-poster.png";
