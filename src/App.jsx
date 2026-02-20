@@ -66,14 +66,21 @@ export default function App() {
 
       {/* TRUE 1080 preview */}
       <div
-        style={{
-          width: 1080,
-          height: 1080,
-          position: "relative",
-          zoom: 0.5,              // 🔥 KEY FIX
-          transformOrigin: "top left"
-        }}
-      >
+  style={{
+    width: "100%",
+    maxWidth: "100vw",
+    overflow: "hidden"
+  }}
+>
+  <div
+    style={{
+      width: 1080,
+      height: 1080,
+      position: "relative",
+      transform: `scale(${Math.min(window.innerWidth / 1080, 1)})`,
+      transformOrigin: "top left"
+    }}
+  >
         {userImage && (
           <Rnd
             size={size}
