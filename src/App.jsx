@@ -44,12 +44,14 @@ if (imgRatio > boxRatio) {
   drawWidth = size.height * imgRatio;
 }
 
+const scaleFactor = 2; // because preview is 0.5 scale
+
 ctx.drawImage(
   imageObj,
-  position.x,
-  position.y,
-  drawWidth,
-  drawHeight
+  position.x * scaleFactor,
+  position.y * scaleFactor,
+  size.width * scaleFactor,
+  size.height * scaleFactor
 );
       }
 
