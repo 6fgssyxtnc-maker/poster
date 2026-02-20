@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Rnd } from "react-rnd";
 
 export default function App() {
@@ -6,6 +6,20 @@ export default function App() {
   const [imageObj, setImageObj] = useState(null);
   const [position, setPosition] = useState({ x: 240, y: 240 });
   const [size, setSize] = useState({ width: 600, height: 600 });
+  const [scale, setScale] = useState(1);
+
+  // Responsive scale calculation
+  useEffect(() => {
+    const updateScale = () => {
+      const screenWidth = window.innerWidth - 40; // padding
+      const newScale = Math.min(screenWidth / 1080, 1);
+      setScale(newScale);
+    };
+
+    updateScale();
+    window.addEventListener("resize", updateScale);
+    return () => window.removeEventListener("resize", updateScale);
+  }, []);
 
   const handleUpload = (file) => {
     const url = URL.createObjectURL(file);
@@ -28,12 +42,14 @@ export default function App() {
 
     poster.onload = () => {
       if (imageObj) {
+        const scaleFactor = 1 / scale;
+
         ctx.drawImage(
           imageObj,
-          position.x,
-          position.y,
-          size.width,
-          size.height
+          position.x * scaleFactor,
+          position.y * scaleFactor,
+          size.width * scaleFactor,
+          size.height * scaleFactor
         );
       }
 
@@ -47,7 +63,13 @@ export default function App() {
   };
 
   return (
-    <div style={{ padding: 20, fontFamily: "Arial" }}>
+    <div
+      style={{
+        padding: 20,
+        fontFamily: "Arial",
+        textAlign: "center"
+      }}
+    >
       <h2>Poster Generator</h2>
 
       <input
@@ -58,35 +80,36 @@ export default function App() {
 
       <br /><br />
 
-      <button onClick={downloadPoster}>
+      <button
+        onClick={downloadPoster}
+        style={{
+          padding: "10px 20px",
+          fontSize: 16,
+          cursor: "pointer"
+        }}
+      >
         Download PNG
       </button>
 
       <br /><br />
 
-      {/* TRUE 1080 preview */}
+      {/* Responsive Preview */}
       <div
-  style={{
-    width: "100%",
-    maxWidth: "100vw",
-    overflow: "hidden"
-  }}
->
-  <div
-    style={{
-      width: 1080,
-      height: 1080,
-      position: "relative",
-      transform: `scale(${Math.min(window.innerWidth / 1080, 1)})`,
-      transformOrigin: "top left"
-    }}
-  >
+        style={{
+          width: 1080,
+          height: 1080,
+          position: "relative",
+          transform: `scale(${scale})`,
+          transformOrigin: "top center",
+          margin: "0 auto"
+        }}
+      >
         {userImage && (
           <Rnd
             size={size}
             position={position}
             bounds="parent"
-            lockAspectRatio={true}
+            lockAspectRatio
             onDragStop={(e, d) =>
               setPosition({ x: d.x, y: d.y })
             }
