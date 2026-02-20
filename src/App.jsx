@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import {
   TransformWrapper,
   TransformComponent
@@ -6,52 +6,57 @@ import {
 
 export default function App() {
   const [userImage, setUserImage] = useState(null);
-  const transformRef = useRef(null);
 
   const handleUpload = (file) => {
     if (!file) return;
-    const url = URL.createObjectURL(file);
-    setUserImage(url);
+    setUserImage(URL.createObjectURL(file));
   };
 
   const downloadPoster = () => {
-    alert("Download works — export logic can go here");
+    alert("Download button works");
   };
 
   return (
-    <div style={container}>
+    <div style={{ padding: 20, textAlign: "center" }}>
       <h2>Poster Generator</h2>
 
-      {/* Upload */}
-      <label style={buttonSecondary}>
+      <label style={btn}>
         Choose Image
         <input
           type="file"
           accept="image/*"
-          onChange={(e) => handleUpload(e.target.files[0])}
           style={{ display: "none" }}
+          onChange={(e) => handleUpload(e.target.files[0])}
         />
       </label>
 
-      {/* Download */}
-      <button onClick={downloadPoster} style={buttonPrimary}>
+      <button style={btn} onClick={downloadPoster}>
         Download PNG
       </button>
 
-      {/* Poster Preview */}
-      <div style={previewWrapper}>
+      <div
+        style={{
+          marginTop: 30,
+          width: "100%",
+          maxWidth: 500,
+          aspectRatio: "1/1",
+          marginInline: "auto",
+          overflow: "hidden",
+          position: "relative",
+          touchAction: "none"
+        }}
+      >
         {userImage && (
-          <TransformWrapper
-            ref={transformRef}
-            minScale={0.5}
-            maxScale={4}
-            initialScale={1}
-          >
+          <TransformWrapper>
             <TransformComponent>
               <img
                 src={userImage}
-                alt="user"
-                style={imageStyle}
+                alt=""
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover"
+                }}
               />
             </TransformComponent>
           </TransformWrapper>
@@ -59,70 +64,25 @@ export default function App() {
 
         <img
           src="/poster-bg.png"
-          alt="poster"
-          style={overlayStyle}
+          alt=""
+          style={{
+            position: "absolute",
+            inset: 0,
+            pointerEvents: "none"
+          }}
         />
       </div>
     </div>
   );
 }
 
-/* ---------- STYLES ---------- */
-
-const container = {
-  textAlign: "center",
-  padding: 20,
-  fontFamily: "Arial",
-  maxWidth: 600,
-  margin: "0 auto"
-};
-
-const previewWrapper = {
-  width: "100%",
-  aspectRatio: "1/1",
-  position: "relative",
-  overflow: "hidden",
-  marginTop: 30,
-  touchAction: "none"
-};
-
-const imageStyle = {
-  width: "100%",
-  height: "100%",
-  objectFit: "cover"
-};
-
-const overlayStyle = {
-  position: "absolute",
-  inset: 0,
-  pointerEvents: "none"
-};
-
-const buttonPrimary = {
+const btn = {
   width: 260,
   height: 50,
-  background: "#000",
-  color: "#fff",
-  border: "none",
-  borderRadius: 12,
-  fontSize: 16,
-  fontWeight: 600,
   margin: "10px auto",
   display: "block",
-  cursor: "pointer"
-};
-
-const buttonSecondary = {
-  width: 260,
-  height: 50,
-  background: "#e5e5e5",
-  color: "#000",
   borderRadius: 12,
+  border: "none",
   fontSize: 16,
-  fontWeight: 600,
-  margin: "10px auto",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
   cursor: "pointer"
 };
