@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Rnd } from "react-rnd";
 
 export default function App() {
@@ -6,20 +6,6 @@ export default function App() {
   const [imageObj, setImageObj] = useState(null);
   const [position, setPosition] = useState({ x: 240, y: 240 });
   const [size, setSize] = useState({ width: 600, height: 600 });
-  const [scale, setScale] = useState(1);
-
-  // Responsive scale calculation
-  useEffect(() => {
-    const updateScale = () => {
-      const screenWidth = window.innerWidth - 40; // padding
-      const newScale = Math.min(screenWidth / 1080, 1);
-      setScale(newScale);
-    };
-
-    updateScale();
-    window.addEventListener("resize", updateScale);
-    return () => window.removeEventListener("resize", updateScale);
-  }, []);
 
   const handleUpload = (file) => {
     const url = URL.createObjectURL(file);
@@ -42,14 +28,12 @@ export default function App() {
 
     poster.onload = () => {
       if (imageObj) {
-        const scaleFactor = 1 / scale;
-
         ctx.drawImage(
           imageObj,
-          position.x * scaleFactor,
-          position.y * scaleFactor,
-          size.width * scaleFactor,
-          size.height * scaleFactor
+          position.x,
+          position.y,
+          size.width,
+          size.height
         );
       }
 
@@ -63,13 +47,7 @@ export default function App() {
   };
 
   return (
-    <div
-      style={{
-        padding: 20,
-        fontFamily: "Arial",
-        textAlign: "center"
-      }}
-    >
+    <div style={{ padding: 20, fontFamily: "Arial" }}>
       <h2>Poster Generator</h2>
 
       <input
@@ -80,28 +58,19 @@ export default function App() {
 
       <br /><br />
 
-      <button
-        onClick={downloadPoster}
-        style={{
-          padding: "10px 20px",
-          fontSize: 16,
-          cursor: "pointer"
-        }}
-      >
+      <button onClick={downloadPoster}>
         Download PNG
       </button>
 
       <br /><br />
 
-      {/* Responsive Preview */}
       <div
         style={{
           width: 1080,
           height: 1080,
           position: "relative",
-          transform: `scale(${scale})`,
-          transformOrigin: "top center",
-          margin: "0 auto"
+          zoom: 0.5,
+          transformOrigin: "top left"
         }}
       >
         {userImage && (
