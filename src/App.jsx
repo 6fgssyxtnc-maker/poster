@@ -7,12 +7,6 @@ export default function App() {
   const [position, setPosition] = useState({ x: 240, y: 240 });
   const [size, setSize] = useState({ width: 600, height: 600 });
 
-  // ✅ Responsive scale (visual only)
-  const previewScale = Math.min(
-    (typeof window !== "undefined" ? window.innerWidth - 40 : 1080) / 1080,
-    1
-  );
-
   const handleUpload = (file) => {
     const url = URL.createObjectURL(file);
     setUserImage(url);
@@ -52,8 +46,21 @@ export default function App() {
     };
   };
 
+  // ✅ Mobile-safe zoom calculation
+  const zoomLevel =
+    typeof window !== "undefined" && window.innerWidth < 600
+      ? window.innerWidth / 1080
+      : 0.5;
+
   return (
-    <div style={{ padding: 20, fontFamily: "Arial", textAlign: "center" }}>
+    <div
+      style={{
+        padding: 20,
+        fontFamily: "Arial",
+        textAlign: "center",
+        overflowX: "hidden" // prevents horizontal scroll
+      }}
+    >
       <h2>Poster Generator</h2>
 
       <input
@@ -66,65 +73,76 @@ export default function App() {
 
       <button
         onClick={downloadPoster}
-        style={{ padding: "10px 20px", fontSize: 16 }}
+        style={{
+          padding: "10px 20px",
+          fontSize: 16
+        }}
       >
         Download PNG
       </button>
 
       <br /><br />
 
-      {/* Responsive Preview */}
+      {/* Wrapper prevents overflow */}
       <div
         style={{
-          width: 1080,
-          height: 1080,
-          position: "relative",
-          transform: `scale(${previewScale})`,
-          transformOrigin: "top center",
-          margin: "0 auto"
+          width: "100%",
+          overflow: "hidden"
         }}
       >
-        {userImage && (
-          <Rnd
-            size={size}
-            position={position}
-            bounds="parent"
-            lockAspectRatio
-            onDragStop={(e, d) =>
-              setPosition({ x: d.x, y: d.y })
-            }
-            onResizeStop={(e, dir, ref, delta, pos) => {
-              setSize({
-                width: parseInt(ref.style.width),
-                height: parseInt(ref.style.height)
-              });
-              setPosition(pos);
-            }}
-          >
-            <img
-              src={userImage}
-              alt="user"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover"
-              }}
-            />
-          </Rnd>
-        )}
-
-        <img
-          src="/poster-bg.png"
-          alt="poster"
+        {/* Real working 1080x1080 canvas */}
+        <div
           style={{
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            top: 0,
-            left: 0,
-            pointerEvents: "none"
+            width: 1080,
+            height: 1080,
+            position: "relative",
+            zoom: zoomLevel,
+            transformOrigin: "top center",
+            margin: "0 auto"
           }}
-        />
+        >
+          {userImage && (
+            <Rnd
+              size={size}
+              position={position}
+              bounds="parent"
+              lockAspectRatio
+              onDragStop={(e, d) =>
+                setPosition({ x: d.x, y: d.y })
+              }
+              onResizeStop={(e, dir, ref, delta, pos) => {
+                setSize({
+                  width: parseInt(ref.style.width),
+                  height: parseInt(ref.style.height)
+                });
+                setPosition(pos);
+              }}
+            >
+              <img
+                src={userImage}
+                alt="user"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover"
+                }}
+              />
+            </Rnd>
+          )}
+
+          <img
+            src="/poster-bg.png"
+            alt="poster"
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              top: 0,
+              left: 0,
+              pointerEvents: "none"
+            }}
+          />
+        </div>
       </div>
     </div>
   );
