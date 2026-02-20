@@ -69,10 +69,20 @@ export default function App() {
           width: 1080,
           height: 1080,
           position: "relative",
-          zoom: 0.5,
-          transformOrigin: "top left"
+       const previewScale = Math.min((window.innerWidth - 40) / 1080, 1);
+          <div
+  style={{
+    width: 1080,
+    height: 1080,
+    position: "relative",
+    transform: `scale(${previewScale})`,
+    transformOrigin: "top center",
+    margin: "0 auto"
+  }}
+>
         }}
       >
+       
         {userImage && (
           <Rnd
             size={size}
