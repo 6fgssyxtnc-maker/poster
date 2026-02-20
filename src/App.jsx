@@ -31,12 +31,12 @@ export default function App() {
         const scaleFactor = 2; // because preview is scaled 0.5
 
         ctx.drawImage(
-          imageObj,
-          position.x * scaleFactor,
-          position.y * scaleFactor,
-          size.width * scaleFactor,
-          size.height * scaleFactor
-        );
+  imageObj,
+  position.x,
+  position.y,
+  size.width,
+  size.height
+);
       }
 
       ctx.drawImage(poster, 0, 0, 1080, 1080);
