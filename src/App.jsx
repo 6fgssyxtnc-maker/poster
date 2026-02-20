@@ -17,26 +17,33 @@ export default function App() {
   };
 
   const downloadPoster = () => {
-    const canvas = document.createElement("canvas");
-    canvas.width = 1080;
-    canvas.height = 1080;
-    const ctx = canvas.getContext("2d");
+  const canvas = document.createElement("canvas");
+  canvas.width = 1080;
+  canvas.height = 1080;
+  const ctx = canvas.getContext("2d");
 
-    const poster = new Image();
-    poster.src = "/poster-bg.png";
-    poster.crossOrigin = "anonymous";
+  const poster = new Image();
+  poster.src = "/poster-bg.png";
+  poster.crossOrigin = "anonymous";
 
-    poster.onload = () => {
-      if (imageObj) {
-        const scaleFactor = 2; // because preview is scaled 0.5
+  poster.onload = () => {
+    if (imageObj) {
+      ctx.drawImage(
+        imageObj,
+        position.x,
+        position.y,
+        size.width,
+        size.height
+      );
+    }
 
-        ctx.drawImage(
-  imageObj,
-  position.x,
-  position.y,
-  size.width,
-  size.height
-);
+    ctx.drawImage(poster, 0, 0, 1080, 1080);
+
+    const link = document.createElement("a");
+    link.download = "facebook-poster.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  };
       }
 
       ctx.drawImage(poster, 0, 0, 1080, 1080);
