@@ -1,19 +1,31 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   TransformWrapper,
   TransformComponent
 } from "react-zoom-pan-pinch";
+import html2canvas from "html2canvas";
 
 export default function App() {
   const [userImage, setUserImage] = useState(null);
+  const posterRef = useRef(null);
 
   const handleUpload = (file) => {
     if (!file) return;
     setUserImage(URL.createObjectURL(file));
   };
 
-  const downloadPoster = () => {
-    alert("Download button works");
+  const downloadPoster = async () => {
+    if (!posterRef.current) return;
+
+    const canvas = await html2canvas(posterRef.current, {
+      useCORS: true,
+      scale: 3
+    });
+
+    const link = document.createElement("a");
+    link.download = "poster.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
   };
 
   return (
@@ -35,6 +47,7 @@ export default function App() {
       </button>
 
       <div
+        ref={posterRef}
         style={{
           marginTop: 30,
           width: "100%",
@@ -43,7 +56,8 @@ export default function App() {
           marginInline: "auto",
           overflow: "hidden",
           position: "relative",
-          touchAction: "none"
+          touchAction: "none",
+          background: "#fff"
         }}
       >
         {userImage && (
@@ -68,6 +82,8 @@ export default function App() {
           style={{
             position: "absolute",
             inset: 0,
+            width: "100%",
+            height: "100%",
             pointerEvents: "none"
           }}
         />
