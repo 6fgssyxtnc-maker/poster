@@ -74,15 +74,22 @@ ctx.drawImage(
 
       <br /><br />
 
-      <div
-        style={{
-          width: 1080,
-          height: 1080,
-          position: "relative",
-          overflow: "hidden",
-          transform: "scale(0.5)",
-          transformOrigin: "top left"
-        }}
+    <div
+  style={{
+    width: 540,
+    height: 540,
+    overflow: "hidden"
+  }}
+>
+  <div
+    style={{
+      width: 1080,
+      height: 1080,
+      position: "relative",
+      transform: "scale(0.5)",
+      transformOrigin: "top left"
+    }}
+  >
       >
         {userImage && (
           <Rnd
