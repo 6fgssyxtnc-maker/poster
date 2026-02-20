@@ -30,13 +30,27 @@ export default function App() {
 
     poster.onload = () => {
       if (imageObj) {
-        ctx.drawImage(
-          imageObj,
-          position.x,
-          position.y,
-          size.width,
-          size.height
-        );
+      const imgRatio = imageObj.width / imageObj.height;
+const boxRatio = size.width / size.height;
+
+let drawWidth = size.width;
+let drawHeight = size.height;
+
+if (imgRatio > boxRatio) {
+  // image is wider
+  drawHeight = size.width / imgRatio;
+} else {
+  // image is taller
+  drawWidth = size.height * imgRatio;
+}
+
+ctx.drawImage(
+  imageObj,
+  position.x,
+  position.y,
+  drawWidth,
+  drawHeight
+);
       }
 
       ctx.drawImage(poster, 0, 0, 1080, 1080);
