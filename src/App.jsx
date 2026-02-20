@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Rnd } from "react-rnd";
 
 export default function App() {
@@ -6,14 +6,50 @@ export default function App() {
   const [imageObj, setImageObj] = useState(null);
   const [position, setPosition] = useState({ x: 240, y: 240 });
   const [size, setSize] = useState({ width: 600, height: 600 });
+  const [scale, setScale] = useState(0.5);
+
+  // ✅ Responsive scale without using zoom
+  useEffect(() => {
+    const updateScale = () => {
+      const screenWidth = window.innerWidth;
+      const newScale = screenWidth < 600 ? screenWidth / 1080 : 0.6;
+      setScale(newScale);
+    };
+
+    updateScale();
+    window.addEventListener("resize", updateScale);
+    return () => window.removeEventListener("resize", updateScale);
+  }, []);
 
   const handleUpload = (file) => {
+    if (!file) return;
+
     const url = URL.createObjectURL(file);
     setUserImage(url);
 
     const img = new Image();
     img.src = url;
-    img.onload = () => setImageObj(img);
+    img.onload = () => {
+      setImageObj(img);
+
+      // ✅ Auto fit image inside 1080 canvas without distortion
+      const maxSize = 800;
+      const ratio = img.width / img.height;
+
+      if (ratio > 1) {
+        setSize({
+          width: maxSize,
+          height: maxSize / ratio
+        });
+      } else {
+        setSize({
+          width: maxSize * ratio,
+          height: maxSize
+        });
+      }
+
+      setPosition({ x: 140, y: 140 });
+    };
   };
 
   const downloadPoster = () => {
@@ -27,6 +63,7 @@ export default function App() {
     poster.crossOrigin = "anonymous";
 
     poster.onload = () => {
+      // ✅ Draw user image FIRST
       if (imageObj) {
         ctx.drawImage(
           imageObj,
@@ -37,68 +74,63 @@ export default function App() {
         );
       }
 
+      // ✅ Draw poster overlay on top
       ctx.drawImage(poster, 0, 0, 1080, 1080);
 
       const link = document.createElement("a");
-      link.download = "facebook-poster.png";
+      link.download = "poster.png";
       link.href = canvas.toDataURL("image/png");
       link.click();
     };
   };
-
-  // ✅ Mobile-safe zoom calculation
-  const zoomLevel =
-    typeof window !== "undefined" && window.innerWidth < 600
-      ? window.innerWidth / 1080
-      : 0.5;
 
   return (
     <div
       style={{
         padding: 20,
         fontFamily: "Arial",
-        textAlign: "center",
-        overflowX: "hidden" // prevents horizontal scroll
+        textAlign: "center"
       }}
     >
       <h2>Poster Generator</h2>
 
-      <input
-        type="file"
-        accept="image/*"
-        onChange={(e) => handleUpload(e.target.files[0])}
-      />
+      {/* Upload Button */}
+      <label style={buttonStyleSecondary}>
+        Choose Image
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => handleUpload(e.target.files[0])}
+          style={{ display: "none" }}
+        />
+      </label>
 
-      <br /><br />
-
-      <button
-        onClick={downloadPoster}
-        style={{
-          padding: "10px 20px",
-          fontSize: 16
-        }}
-      >
+      {/* Download Button */}
+      <button onClick={downloadPoster} style={buttonStylePrimary}>
         Download PNG
       </button>
 
-      <br /><br />
+      <br />
+      <br />
 
-      {/* Wrapper prevents overflow */}
+      {/* Responsive scaled preview */}
       <div
         style={{
-          width: "100%",
-          overflow: "hidden"
+          width: 1080 * scale,
+          height: 1080 * scale,
+          margin: "0 auto",
+          position: "relative"
         }}
       >
-        {/* Real working 1080x1080 canvas */}
         <div
           style={{
             width: 1080,
             height: 1080,
-            position: "relative",
-            zoom: zoomLevel,
-            transformOrigin: "top center",
-            margin: "0 auto"
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+            position: "absolute",
+            top: 0,
+            left: 0
           }}
         >
           {userImage && (
@@ -124,7 +156,7 @@ export default function App() {
                 style={{
                   width: "100%",
                   height: "100%",
-                  objectFit: "cover"
+                  objectFit: "contain" // ✅ NO distortion
                 }}
               />
             </Rnd>
@@ -147,3 +179,33 @@ export default function App() {
     </div>
   );
 }
+
+/* ✅ BUTTON STYLES */
+const buttonStylePrimary = {
+  width: 260,
+  height: 50,
+  background: "#000",
+  color: "#fff",
+  border: "none",
+  borderRadius: 12,
+  fontSize: 16,
+  fontWeight: 600,
+  margin: "10px auto",
+  display: "block",
+  cursor: "pointer"
+};
+
+const buttonStyleSecondary = {
+  width: 260,
+  height: 50,
+  background: "#e5e5e5",
+  color: "#000",
+  borderRadius: 12,
+  fontSize: 16,
+  fontWeight: 600,
+  margin: "10px auto",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  cursor: "pointer"
+};
