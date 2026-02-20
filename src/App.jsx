@@ -28,15 +28,12 @@ export default function App() {
 
     poster.onload = () => {
       if (imageObj) {
-        const previewScale = 0.5;
-        const scaleFactor = 1 / previewScale; // = 2
-
         ctx.drawImage(
           imageObj,
-          position.x * scaleFactor,
-          position.y * scaleFactor,
-          size.width * scaleFactor,
-          size.height * scaleFactor
+          position.x,
+          position.y,
+          size.width,
+          size.height
         );
       }
 
@@ -67,66 +64,57 @@ export default function App() {
 
       <br /><br />
 
-      {/* Preview wrapper (visible size 540x540) */}
+      {/* TRUE 1080 preview */}
       <div
         style={{
-          width: 540,
-          height: 540,
-          overflow: "hidden"
+          width: 1080,
+          height: 1080,
+          position: "relative",
+          zoom: 0.5,              // 🔥 KEY FIX
+          transformOrigin: "top left"
         }}
       >
-        {/* Real working canvas 1080x1080 */}
-        <div
-          style={{
-            width: 1080,
-            height: 1080,
-            position: "relative",
-            transform: "scale(0.5)",
-            transformOrigin: "top left"
-          }}
-        >
-          {userImage && (
-            <Rnd
-              size={size}
-              position={position}
-              bounds="parent"
-              lockAspectRatio={true}
-              onDragStop={(e, d) =>
-                setPosition({ x: d.x, y: d.y })
-              }
-              onResizeStop={(e, dir, ref, delta, pos) => {
-                setSize({
-                  width: parseInt(ref.style.width),
-                  height: parseInt(ref.style.height)
-                });
-                setPosition(pos);
-              }}
-            >
-              <img
-                src={userImage}
-                alt="user"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover"
-                }}
-              />
-            </Rnd>
-          )}
-
-          <img
-            src="/poster-bg.png"
-            alt="poster"
-            style={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-              top: 0,
-              left: 0,
-              pointerEvents: "none"
+        {userImage && (
+          <Rnd
+            size={size}
+            position={position}
+            bounds="parent"
+            lockAspectRatio={true}
+            onDragStop={(e, d) =>
+              setPosition({ x: d.x, y: d.y })
+            }
+            onResizeStop={(e, dir, ref, delta, pos) => {
+              setSize({
+                width: parseInt(ref.style.width),
+                height: parseInt(ref.style.height)
+              });
+              setPosition(pos);
             }}
-          />
-        </div>
+          >
+            <img
+              src={userImage}
+              alt="user"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover"
+              }}
+            />
+          </Rnd>
+        )}
+
+        <img
+          src="/poster-bg.png"
+          alt="poster"
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            top: 0,
+            left: 0,
+            pointerEvents: "none"
+          }}
+        />
       </div>
     </div>
   );
