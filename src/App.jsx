@@ -17,33 +17,27 @@ export default function App() {
   };
 
   const downloadPoster = () => {
-  const canvas = document.createElement("canvas");
-  canvas.width = 1080;
-  canvas.height = 1080;
-  const ctx = canvas.getContext("2d");
+    const canvas = document.createElement("canvas");
+    canvas.width = 1080;
+    canvas.height = 1080;
+    const ctx = canvas.getContext("2d");
 
-  const poster = new Image();
-  poster.src = "/poster-bg.png";
-  poster.crossOrigin = "anonymous";
+    const poster = new Image();
+    poster.src = "/poster-bg.png";
+    poster.crossOrigin = "anonymous";
 
-  poster.onload = () => {
-    if (imageObj) {
-      ctx.drawImage(
-        imageObj,
-        position.x,
-        position.y,
-        size.width,
-        size.height
-      );
-    }
+    poster.onload = () => {
+      if (imageObj) {
+        const previewScale = 0.5;
+        const scaleFactor = 1 / previewScale; // = 2
 
-    ctx.drawImage(poster, 0, 0, 1080, 1080);
-
-    const link = document.createElement("a");
-    link.download = "facebook-poster.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-  };
+        ctx.drawImage(
+          imageObj,
+          position.x * scaleFactor,
+          position.y * scaleFactor,
+          size.width * scaleFactor,
+          size.height * scaleFactor
+        );
       }
 
       ctx.drawImage(poster, 0, 0, 1080, 1080);
@@ -73,7 +67,7 @@ export default function App() {
 
       <br /><br />
 
-      {/* Preview wrapper */}
+      {/* Preview wrapper (visible size 540x540) */}
       <div
         style={{
           width: 540,
@@ -81,6 +75,7 @@ export default function App() {
           overflow: "hidden"
         }}
       >
+        {/* Real working canvas 1080x1080 */}
         <div
           style={{
             width: 1080,
