@@ -75,7 +75,12 @@ ctx.drawImage(
       />
 
       <br /><br />
-
+<button onClick={downloadPoster}>
+        Download PNG
+      </button>
+    </div>
+  );
+  
     <div
   style={{
     width: 540,
@@ -138,9 +143,5 @@ ctx.drawImage(
 
       <br />
 
-      <button onClick={downloadPoster}>
-        Download PNG
-      </button>
-    </div>
-  );
+      
 }
