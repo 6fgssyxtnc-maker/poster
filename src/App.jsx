@@ -7,6 +7,12 @@ export default function App() {
   const [position, setPosition] = useState({ x: 240, y: 240 });
   const [size, setSize] = useState({ width: 600, height: 600 });
 
+  // ✅ Responsive scale (visual only)
+  const previewScale = Math.min(
+    (typeof window !== "undefined" ? window.innerWidth - 40 : 1080) / 1080,
+    1
+  );
+
   const handleUpload = (file) => {
     const url = URL.createObjectURL(file);
     setUserImage(url);
@@ -47,7 +53,7 @@ export default function App() {
   };
 
   return (
-    <div style={{ padding: 20, fontFamily: "Arial" }}>
+    <div style={{ padding: 20, fontFamily: "Arial", textAlign: "center" }}>
       <h2>Poster Generator</h2>
 
       <input
@@ -58,31 +64,26 @@ export default function App() {
 
       <br /><br />
 
-      <button onClick={downloadPoster}>
+      <button
+        onClick={downloadPoster}
+        style={{ padding: "10px 20px", fontSize: 16 }}
+      >
         Download PNG
       </button>
 
       <br /><br />
 
+      {/* Responsive Preview */}
       <div
         style={{
           width: 1080,
           height: 1080,
           position: "relative",
-       const previewScale = Math.min((window.innerWidth - 40) / 1080, 1);
-          <div
-  style={{
-    width: 1080,
-    height: 1080,
-    position: "relative",
-    transform: `scale(${previewScale})`,
-    transformOrigin: "top center",
-    margin: "0 auto"
-  }}
->
+          transform: `scale(${previewScale})`,
+          transformOrigin: "top center",
+          margin: "0 auto"
         }}
       >
-       
         {userImage && (
           <Rnd
             size={size}
